@@ -12,6 +12,7 @@ struct Habit {
     var name: String
     var color: Color
     
+    var startDate = Date()
     var isChecked = [false]
     var consecutiveMissesAllowed: Int
     
