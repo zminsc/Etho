@@ -12,7 +12,7 @@ struct ContentView: View {
     @State private var showingNewHabitSheet = false
     
     var body: some View {
-        VStack {
+        VStack(spacing: 20) {
             HStack {
                 Circle()
                     .fill(Color.gray)
@@ -26,9 +26,6 @@ struct ContentView: View {
                     Text("+ habit")
                 }
             }
-            
-            Spacer()
-                .frame(height: 20)
             
             ScrollView {
                 VStack(spacing: 16) {
@@ -46,6 +43,9 @@ struct ContentView: View {
                 viewModel.addHabit(newHabit)
                 showingNewHabitSheet = false
             }
+        }
+        .onAppear {
+            viewModel.loadSampleData()
         }
     }
 }
