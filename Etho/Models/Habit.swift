@@ -17,10 +17,12 @@ struct Habit {
     var consecutiveMissesAllowed: Int
     
     var streak: Int {
-        var length = 0
+        guard !isChecked.isEmpty else { return 0 }
+        
+        var length = isChecked[isChecked.count - 1] ? 1 : 0
         var consecutiveMisses = 0
         
-        for i in (0..<isChecked.count).reversed() {
+        for i in (0..<(isChecked.count - 1)).reversed() {
             if isChecked[i] {
                 length += 1
                 consecutiveMisses = 0
