@@ -9,6 +9,8 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var viewModel = HabitsViewModel()
+    
+    @State private var selectedDate = Date()
     @State private var showingNewHabitSheet = false
     
     var body: some View {
@@ -27,10 +29,27 @@ struct ContentView: View {
                 }
             }
             
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack {
+                    ForEach(viewModel.dates, id: \.self) { date in
+                        Button {
+                            selectedDate = date
+                        } label: {
+                            Text("\(Calendar.current.dateComponents([.day], from: date).day!)")
+                                .foregroundStyle(.black)
+                                .frame(width: 50, height: 50)
+                        }
+                        .background(selectedDate == date ? .gray : .white)
+                        .clipShape(RoundedRectangle(cornerRadius: 4.0))
+                    }
+                }
+            }
+            .environment(\.layoutDirection, .rightToLeft)
+            
             ScrollView {
                 VStack(spacing: 16) {
-                    ForEach(viewModel.habits.indices, id: \.self) { index in
-                        HabitCardView(habit: $viewModel.habits[index])
+                    ForEach($viewModel.habits.filter { $0.wrappedValue.startDate <= selectedDate }) { habit in
+                        HabitCardView(habit: habit, date: selectedDate)
                     }
                 }
             }
@@ -52,6 +71,11 @@ struct ContentView: View {
 
 struct HabitCardView: View {
     @Binding var habit: Habit
+    var date: Date
+    
+    var idxOffset: Int {
+        Calendar.current.dateComponents([.day], from: habit.startDate, to: date).day!
+    }
 
     var body: some View {
         HStack {
@@ -61,16 +85,14 @@ struct HabitCardView: View {
             
             Spacer()
             
-            Text("\(habit.streak) ⚡")
+            Text("\(habit.getStreak(at: date)) ⚡")
                 .font(.subheadline)
                 .foregroundColor(.black)
             
             Button(action: {
-                if let lastIndex = habit.isChecked.indices.last {
-                    habit.isChecked[lastIndex].toggle()
-                }
+                habit.isChecked[idxOffset].toggle()
             }) {
-                Image(systemName: habit.isChecked.last ?? false ? "checkmark.square.fill" : "square")
+                Image(systemName: habit.isChecked[idxOffset] ? "checkmark.square.fill" : "square")
                     .resizable()
                     .frame(width: 24, height: 24)
                     .foregroundColor(.black)
