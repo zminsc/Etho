@@ -41,6 +41,7 @@ struct AddHabitView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         onSave(Habit(name: name, color: color, allowedSkipDays: allowedSkipDays))
+                        dismiss()
                     } label: {
                         Text("Save")
                     }
