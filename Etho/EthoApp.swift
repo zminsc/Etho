@@ -12,6 +12,7 @@ struct EthoApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(HabitsViewModel())
         }
     }
 }
